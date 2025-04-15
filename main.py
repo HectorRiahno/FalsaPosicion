@@ -13,14 +13,15 @@ class NoConvergenceError(Exception):
 class InvalidFunctionError(Exception):
     pass
 
-#limpiar inputs
+#! limpiar inputs
 def clear_inputs():
     funcion_entry.delete(0, 'end')
     xl_entry.delete(0, 'end')                                                                           
     xu_entry.delete(0, 'end')
     porcentaje_entry.delete(0, 'end')
     clear_table()
-#graficar funcion
+              
+#?graficar funcion
 def plot_function(expression_str, result_data):
     x = np.linspace(float(xl_entry.get()), float(xu_entry.get()), 400)
     y = lambdify(symbols('x'), sympify(expression_str))(x)
@@ -38,11 +39,13 @@ def plot_function(expression_str, result_data):
     plt.legend()
     plt.grid(True)
     plt.show()
-#limpiar tabla
+    
+#? limpiar tabla
 def clear_table():
     for item in tree.get_children():
         tree.delete(item)
-# declaramos funcion para determinar si es valida o no la funcion a manejar
+        
+#? declaramos funcion para determinar si es valida o no la funcion a manejar
 def is_valid_function(funcion, valor):
     x = symbols('x')
     try:
@@ -52,7 +55,7 @@ def is_valid_function(funcion, valor):
     except Exception:
         return False
 
-#evaluamos la funcion para encontrar los valores de la funcion evaluados
+#? evaluamos la funcion para encontrar los valores de la funcion evaluados
 def evaluar(x):
     return round(eval(funcion_entry.get()),4)
 
@@ -61,16 +64,16 @@ def fala_posicion(error_relativo, xl, xu):
     if not is_valid_function(funcion_entry.get(), xl) or not is_valid_function(funcion_entry.get(), xu):
         raise InvalidFunctionError("La función no es válida en los puntos iniciales X_L y X_U.")
     
-    #declaramos arrays donde almacenaremos los valores encontrados 
+    #? declaramos arrays donde almacenaremos los valores encontrados 
     tabla=[]
     porcentaje_error=100;
     
-    #declaramos variable de conteo para saber el numero de iteraciones
+    #? declaramos variable de conteo para saber el numero de iteraciones
     contador=0
     fin=100
     while(porcentaje_error>=error_relativo):
 
-        #hallamos los valores evaludos en la funcion y el valor de xr
+        #? hallamos los valores evaludos en la funcion y el valor de xr
         fxl=evaluar(xl)
         fxu=evaluar(xu)
     
@@ -82,7 +85,7 @@ def fala_posicion(error_relativo, xl, xu):
         
         fxr=evaluar(xr)
         
-        #determinamos el error relativo porcentual y lo almacenamos en la tabla 
+        #? determinamos el error relativo porcentual y lo almacenamos en la tabla 
         if(contador == 0):
             porcentaje_error="####"
         else:
@@ -100,7 +103,7 @@ def fala_posicion(error_relativo, xl, xu):
         else:
             tabla.append([contador+1,xl,xr,xu,fxl,fxr,fxu,porcentaje_error])
             
-        #determinamos nuevos intervalos
+        #? determinamos nuevos intervalos
         if(fxl*fxu>=0):
             
             messagebox.showerror("Error",str(f"metodo no converge fxl*fxu > 0 => '{fxl*fxu}' ")) 
@@ -121,7 +124,7 @@ def fala_posicion(error_relativo, xl, xu):
         if(contador==fin):
             return tabla
     return tabla
-#se crea el tablero de valores 
+#? mse crea el tablero de valores 
 def tablero (error,XL,XU):
     
     try:
@@ -136,14 +139,14 @@ def tablero (error,XL,XU):
     except (InvalidFunctionError, ValueError,NoConvergenceError) as e:
         messagebox.showerror("Error", str(e))
     
-# creamos interfazes
+#? creamos interfazes
 
-# creamos interfaz de instrucciones 
+#? creamos interfaz de instrucciones 
 def crear_ventana1():
     root = Tk()
     root.geometry("800x500")
     root.title("Método de Falsa Posición")
-    root.config(bg="#2F4F4F")  # DarkSlateGray
+    root.config(bg="#2F4F4F")  
 
     # Título principal
     titulo = Label(root, text="Método de Falsa Posición", font=('Helvetica', 20, 'bold'),
@@ -226,13 +229,13 @@ porcentaje_entry = ttk.Entry(root2, name="porcentaje", **estilo_entry)
 porcentaje_entry.place(x=152, y=260)
 
 
-#enviar valores a caja de texto para la funcion
+#? enviar valores a caja de texto para la funcion
 def enviar_numero(valor):
     
     posicion_cursor=funcion_entry.index(tk.INSERT)
     funcion_entry.insert(posicion_cursor,valor)
     
-#envio del '.' y '^'
+#? envio del '.' y '^'
 def enviar_simbolos(simbolo):
     posicion_cursor=funcion_entry.index(tk.INSERT)
     
@@ -241,14 +244,14 @@ def enviar_simbolos(simbolo):
     else:
         funcion_entry.insert(posicion_cursor,simbolo)
     
-#tablero numerico
+#? tablero numerico
 Label(root2, text="Valores Numéricos", font=('Helvetica', 16, 'bold'), bg="#2F4F4F", fg="white").place(x=350, y=90)
 
-# Frame contenedor del tablero
+#? Frame contenedor del tablero
 tablero_numeros = Frame(root2, bg="#2F4F4F")
 tablero_numeros.place(x=355, y=138)
 
-# Estilo común para botones
+#? Estilo común para botones
 boton_style = {
     'width': 4,
     'height': 2,
@@ -259,21 +262,21 @@ boton_style = {
     'relief': 'raised'
 }
 
-# Diccionario de botones para crear en bucle
+#? Diccionario de botones para crear en bucle
 botones = [
     ('1', 0, 0), ('2', 0, 1), ('3', 0, 2), ('4', 0, 3),
     ('5', 1, 0), ('6', 1, 1), ('7', 1, 2), ('8', 1, 3),
     ('9', 2, 0), ('0', 2, 1), ('.', 2, 2), ('^', 2, 3)
 ]
 
-# Funciones de mapeo
+#? Funciones de mapeo
 def accion(valor):
     if valor in '0123456789':
         enviar_numero(int(valor))
     else:
         enviar_simbolos(valor)
 
-# Crear botones dinámicamente
+#? Crear botones dinámicamente
 for texto, fila, col in botones:
     Button(
         tablero_numeros,
@@ -282,7 +285,7 @@ for texto, fila, col in botones:
         **boton_style
     ).grid(row=fila, column=col, padx=5, pady=5)
 
-#creamos funcion para mandar los valores del tablero a la caja de texto de funcion
+#? creamos funcion para mandar los valores del tablero a la caja de texto de funcion
 funcionVar=StringVar()
 def funciones():
     
@@ -307,7 +310,7 @@ def funciones():
                 else:
                     funcion_entry.insert(posicion_cursor,funcionVar.get())
                 
-# Tablero de Funciones  
+#? Tablero de Funciones  
 Label(root2, text="Funciones", font=('Helvetica', 14, 'bold'), bg="#2F4F4F", fg="white").place(x=640, y=90)
 
 # Contenedor del tablero de funciones
@@ -317,7 +320,7 @@ tablero_funcion.place(x=620, y=140)
 style = ttk.Style()
 style.configure("TRadiobutton", font=("Helvetica", 10), padding=6)
 
-# Funciones matemáticas como opciones
+#? Funciones matemáticas como opciones
 botones = [
     ("e", "e", 0, 0),
     ("Log()", "log()", 0, 1),
@@ -337,7 +340,7 @@ for texto, valor, fila, col in botones:
         style="TRadiobutton"
     ).grid(row=fila, column=col, padx=10, pady=5)
 
-# Botón de calcular
+#? Botón de calcular
 bot = Button(
     root2,
     text="Calcular",
@@ -349,7 +352,7 @@ bot = Button(
 )
 bot.place(x=620, y=240)
 
-# Botón para limpiar
+#? Botón para limpiar
 clear_button = Button(
     root2,
     text="Borrar Datos",
@@ -361,7 +364,7 @@ clear_button = Button(
 )
 clear_button.place(x=740, y=240)
 
-# Botón de ayuda (instrucciones)
+#? Botón de ayuda (instrucciones)
 instrucciones = Button(
     root2,
     text="Instrucciones ",
@@ -373,7 +376,7 @@ instrucciones = Button(
 )
 instrucciones.place(x=620, y=300)
 
-#creamos tabla para la meustra de los valores
+#? creamos tabla para la meustra de los valores
 columns = ['Iteración', 'X_L', 'X_R', 'X_U', 'f(X_L)', 'f(X_R)', 'f(X_U)', '|e_a|']
 tree = ttk.Treeview(root2, columns=columns, show='headings',height=13)
 
