@@ -1,3 +1,4 @@
+# importaciones
 from math import *
 from sympy import *
 from tkinter import *
@@ -363,7 +364,7 @@ clear_button.place(x=740, y=240)
 # Botón de ayuda (instrucciones)
 instrucciones = Button(
     root2,
-    text="Instrucciones ⚙️",
+    text="Instrucciones ",
     bg="#2196F3", fg="white",
     font=('Helvetica', 10, 'bold'),
     width=15, height=2,
