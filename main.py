@@ -21,36 +21,36 @@ def clear_inputs():
     porcentaje_entry.delete(0, 'end')
     clear_table()
               
-#?graficar funcion
-def plot_function(expression_str, result_data):
-    x = np.linspace(float(xl_entry.get()), float(xu_entry.get()), 400)
-    y = lambdify(symbols('x'), sympify(expression_str))(x)
+#? graficar funcion
+def plot_function(expression_str, result_data): #* expression_str: cadena con la funcion matemática ingresada  result_data: una lista con los resultados de las iteraciones
+    x = np.linspace(float(xl_entry.get()), float(xu_entry.get()), 400)  #* toma los valores xl y xu directamente de los campos de entrada (Entry) de la interfaz gráfica
+    y = lambdify(symbols('x'), sympify(expression_str))(x) #* sympify(expression_str): convierte la cadena a una expresión simbólica de SymPy. lambdify(symbols('x'), ...): convierte esa expresión simbólica en una función que puede trabajar numpy.
 
-    plt.figure(figsize=(8, 6))
-    plt.plot(x, y, label=expression_str)
+    plt.figure(figsize=(8, 6)) #* dimensiones de la grafica
+    plt.plot(x, y, label=expression_str)  #* grafica de la curva con el nombre de la funcion
 
-    roots_x = [float(row[2]) for row in result_data]
-    roots_y = [lambdify(symbols('x'), sympify(expression_str))(root) for root in roots_x]
-    plt.scatter(roots_x, roots_y, color='red', label='Raíces encontradas', marker='o')
+    roots_x = [float(row[2]) for row in result_data]  #* extre el valor de xr de cada iteracion para graficar   
+    roots_y = [lambdify(symbols('x'), sympify(expression_str))(root) for root in roots_x]  #* evalua la fucion en cada xr para obtener y
+    plt.scatter(roots_x, roots_y, color='red', label='Raíces encontradas', marker='o')  #* dibuja los puntos donde se encontraron las raices aproximadas
 
-    plt.title("Gráfica de la Función y Raíces Encontradas")
-    plt.xlabel("x")
+    plt.title("Gráfica de la Función y Raíces Encontradas") #* tilulo
+    plt.xlabel("x") #* etiquetas de los ejes
     plt.ylabel("y")
     plt.legend()
     plt.grid(True)
-    plt.show()
+    plt.show()  #* muestra el grafico en una ventana
     
 #? limpiar tabla
 def clear_table():
-    for item in tree.get_children():
-        tree.delete(item)
+    for item in tree.get_children(): #* debuelve los ids de todas las fila de la tabla
+        tree.delete(item)   #* elimina el cotenido de la fila correspondiente al id
         
 #? declaramos funcion para determinar si es valida o no la funcion a manejar
-def is_valid_function(funcion, valor):
+def is_valid_function(funcion, valor): 
     x = symbols('x')
     try:
-        func_expr = sympify(funcion)
-        lambdify(x, func_expr)(valor)
+        func_expr = sympify(funcion)  #* convierte el string a una expresion simbolica con sympy
+        lambdify(x, func_expr)(valor)  #* lambdify convierte la expresion simbolica en un funcion de python para evaluar con numeros
         return True
     except Exception:
         return False
@@ -124,6 +124,7 @@ def fala_posicion(error_relativo, xl, xu):
         if(contador==fin):
             return tabla
     return tabla
+
 #? mse crea el tablero de valores 
 def tablero (error,XL,XU):
     
@@ -204,7 +205,7 @@ root2.geometry("950x650")
 root2.config(bg="#2F4F4F")
 root2.title("Pedir datos")
 
-#* Título de sección VALORES DE ENTRADA 
+#? Título de sección VALORES DE ENTRADA 
 
 Label(root2, text="Valores de Entrada", font=('Helvetica', 16, 'bold'), bg="#2F4F4F", fg="white").place(x=50, y=90)
 
@@ -313,7 +314,7 @@ def funciones():
 #? Tablero de Funciones  
 Label(root2, text="Funciones", font=('Helvetica', 14, 'bold'), bg="#2F4F4F", fg="white").place(x=640, y=90)
 
-# Contenedor del tablero de funciones
+#? Contenedor del tablero de funciones
 tablero_funcion = ttk.Frame(root2)
 tablero_funcion.place(x=620, y=140)
 
