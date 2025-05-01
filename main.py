@@ -59,7 +59,7 @@ def is_valid_function(funcion, valor):
 def evaluar(x):
     return round(eval(funcion_entry.get()),4)
 
-def fala_posicion(error_relativo, xl, xu):
+def falsa_posicion(error_relativo, xl, xu):
     
     if not is_valid_function(funcion_entry.get(), xl) or not is_valid_function(funcion_entry.get(), xu):
         raise InvalidFunctionError("La función no es válida en los puntos iniciales X_L y X_U.")
@@ -125,18 +125,17 @@ def fala_posicion(error_relativo, xl, xu):
             return tabla
     return tabla
 
-#? mse crea el tablero de valores 
+#? se crea el tablero de valores 
 def tablero (error,XL,XU):
-    
     try:
         error_relativo=float(error)
         xl=float(XL)
         xu=float(XU)
-        result_data = fala_posicion(error_relativo,xl,xu)
+        result_data = falsa_posicion(error_relativo,xl,xu)
         clear_table()
-        for row_data in result_data:
+        for row_data in result_data:   #* recorre cada fila e inserta en un componente de la tabla llamado tree
             tree.insert('', 'end', values=row_data)
-        plot_function(funcion_entry.get(),result_data)
+        plot_function(funcion_entry.get(),result_data)   #* llama a la funcion plot_fuction para graficar, enviando la funcion  y los datos resultantes del metodo
     except (InvalidFunctionError, ValueError,NoConvergenceError) as e:
         messagebox.showerror("Error", str(e))
     
@@ -149,7 +148,7 @@ def crear_ventana1():
     root.title("Método de Falsa Posición")
     root.config(bg="#2F4F4F")  
 
-    # Título principal
+    #* Título principal
     titulo = Label(root, text="Método de Falsa Posición", font=('Helvetica', 20, 'bold'),
                    bg="#2F4F4F", fg="white")
     titulo.pack(pady=10)
@@ -196,10 +195,9 @@ def crear_ventana1():
                      activebackground="#45A049", width=20, height=2, bd=0, command=root.destroy)
     iniciar.pack(pady=15)
 
-    root.mainloop()
-    
+    root.mainloop()    
 crear_ventana1()
-
+#? ventana principal 
 root2=Tk()
 root2.geometry("950x650")
 root2.config(bg="#2F4F4F")
@@ -232,7 +230,6 @@ porcentaje_entry.place(x=152, y=260)
 
 #? enviar valores a caja de texto para la funcion
 def enviar_numero(valor):
-    
     posicion_cursor=funcion_entry.index(tk.INSERT)
     funcion_entry.insert(posicion_cursor,valor)
     
@@ -248,11 +245,11 @@ def enviar_simbolos(simbolo):
 #? tablero numerico
 Label(root2, text="Valores Numéricos", font=('Helvetica', 16, 'bold'), bg="#2F4F4F", fg="white").place(x=350, y=90)
 
-#? Frame contenedor del tablero
+#? frame contenedor del tablero
 tablero_numeros = Frame(root2, bg="#2F4F4F")
 tablero_numeros.place(x=355, y=138)
 
-#? Estilo común para botones
+#? estilo común para botones
 boton_style = {
     'width': 4,
     'height': 2,
@@ -270,14 +267,14 @@ botones = [
     ('9', 2, 0), ('0', 2, 1), ('.', 2, 2), ('^', 2, 3)
 ]
 
-#? Funciones de mapeo
+#? funciones de mapeo
 def accion(valor):
     if valor in '0123456789':
         enviar_numero(int(valor))
     else:
         enviar_simbolos(valor)
 
-#? Crear botones dinámicamente
+#? crear botones dinámicamente
 for texto, fila, col in botones:
     Button(
         tablero_numeros,
@@ -287,29 +284,18 @@ for texto, fila, col in botones:
     ).grid(row=fila, column=col, padx=5, pady=5)
 
 #? creamos funcion para mandar los valores del tablero a la caja de texto de funcion
-funcionVar=StringVar()
+funcionVar=StringVar() #* botones de radio
 def funciones():
-    
-    if(funcion_entry.get()==""):
-        
-        funciones=["e","sen()","cos()","tan()","log()","sqrt()"]
-        posicion_cursor=funcion_entry.index(tk.INSERT)
-        for fun in range(0,len(funciones)):
-            if(funcionVar.get()==funciones[fun]):
-                if(funcionVar.get()=="sen()"):
-                    funcion_entry.insert(posicion_cursor,"sin()")
-                else:
-                    funcion_entry.insert(posicion_cursor,funcionVar.get())
-                
-    else:
-        funciones=["e","sen()","cos()","tan()","log()","sqrt()"]
-        posicion_cursor=funcion_entry.index(tk.INSERT)
-        for fun in range(0,len(funciones)):
-            if(funcionVar.get()==funciones[fun]):
-                if(funcionVar.get()=="sen()"):
-                    funcion_entry.insert(posicion_cursor,"sin()")
-                else:
-                    funcion_entry.insert(posicion_cursor,funcionVar.get())
+    funciones = ["e", "sen()", "cos()", "tan()", "log()", "sqrt()"]
+    posicion_cursor = funcion_entry.index(tk.INSERT)
+    seleccion = funcionVar.get()
+
+    if seleccion in funciones:
+        if seleccion == "sen()":
+            funcion_entry.insert(posicion_cursor, "sin()")
+        else:
+            funcion_entry.insert(posicion_cursor, seleccion)
+
                 
 #? Tablero de Funciones  
 Label(root2, text="Funciones", font=('Helvetica', 14, 'bold'), bg="#2F4F4F", fg="white").place(x=640, y=90)
