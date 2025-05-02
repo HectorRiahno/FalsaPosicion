@@ -1,6 +1,6 @@
 # importaciones
 from math import *
-from sympy import *
+from sympy import symbols, sympify, lambdify, E
 from tkinter import *
 import tkinter as tk
 from tkinter import ttk, messagebox
@@ -23,22 +23,34 @@ def clear_inputs():
               
 #? graficar funcion
 def plot_function(expression_str, result_data): #* expression_str: cadena con la funcion matemática ingresada  result_data: una lista con los resultados de las iteraciones
-    x = np.linspace(float(xl_entry.get()), float(xu_entry.get()), 400)  #* toma los valores xl y xu directamente de los campos de entrada (Entry) de la interfaz gráfica
-    y = lambdify(symbols('x'), sympify(expression_str))(x) #* sympify(expression_str): convierte la cadena a una expresión simbólica de SymPy. lambdify(symbols('x'), ...): convierte esa expresión simbólica en una función que puede trabajar numpy.
+    # x = np.linspace(float(xl_entry.get()), float(xu_entry.get()), 400)  #* toma los valores xl y xu directamente de los campos de entrada (Entry) de la interfaz gráfica
+    try:
+        print(f"Expresión ingresada: {expression_str}")
+        
+        x = symbols('x')
+        expr = sympify(expression_str, locals={'e': E})
+        f = lambdify(x, expr, modules=['numpy'])
+        x_vals = np.linspace(float(xl_entry.get()), float(xu_entry.get()), 400)
+        y_vals = f(x_vals)
+        
+        plt.figure(figsize=(8, 6)) #* dimensiones de la grafica
+        plt.plot(x_vals, y_vals, label=expression_str)  #* grafica de la curva con el nombre de la funcion
 
-    plt.figure(figsize=(8, 6)) #* dimensiones de la grafica
-    plt.plot(x, y, label=expression_str)  #* grafica de la curva con el nombre de la funcion
+        roots_x = [float(row[2]) for row in result_data]  #* extre el valor de xr de cada iteracion para graficar   
+        roots_y = [f(xr) for xr in roots_x] #* evalua la fucion en cada xr para obtener y
+        plt.scatter(roots_x, roots_y, color='red', label='Raíces encontradas', marker='o')  #* dibuja los puntos donde se encontraron las raices aproximadas
 
-    roots_x = [float(row[2]) for row in result_data]  #* extre el valor de xr de cada iteracion para graficar   
-    roots_y = [lambdify(symbols('x'), sympify(expression_str))(root) for root in roots_x]  #* evalua la fucion en cada xr para obtener y
-    plt.scatter(roots_x, roots_y, color='red', label='Raíces encontradas', marker='o')  #* dibuja los puntos donde se encontraron las raices aproximadas
+        plt.title("Gráfica de la Función y Raíces Encontradas") #* tilulo
+        plt.xlabel("x") #* etiquetas de los ejes
+        plt.ylabel("y")
+        plt.legend()
+        plt.grid(True)
+        plt.show()  #* muestra el grafico en una ventana
+    except Exception as err:
+        print("Error al procesar la función:",f"{err}")
+    # y = lambdify(symbols('x'), sympify(expression_str))(x) # sympify(expression_str): convierte la cadena a una expresión simbólica de SymPy. lambdify(symbols('x'), ...): convierte esa expresión simbólica en una función que puede trabajar numpy.
 
-    plt.title("Gráfica de la Función y Raíces Encontradas") #* tilulo
-    plt.xlabel("x") #* etiquetas de los ejes
-    plt.ylabel("y")
-    plt.legend()
-    plt.grid(True)
-    plt.show()  #* muestra el grafico en una ventana
+    
     
 #? limpiar tabla
 def clear_table():
@@ -105,7 +117,6 @@ def falsa_posicion(error_relativo, xl, xu):
             
         #? determinamos nuevos intervalos
         if(fxl*fxu>=0):
-            
             messagebox.showerror("Error",str(f"metodo no converge fxl*fxu > 0 => '{fxl*fxu}' ")) 
             return tabla
         else:
@@ -253,8 +264,6 @@ tablero_numeros.place(x=355, y=138)
 boton_style = {
     'width': 4,
     'height': 2,
-    'bg': "#D3D3D3",
-    'fg': "#000000",
     'font': ('Helvetica', 12, 'bold'),
     'bd': 2,
     'relief': 'raised'
@@ -286,7 +295,7 @@ for texto, fila, col in botones:
 #? creamos funcion para mandar los valores del tablero a la caja de texto de funcion
 funcionVar=StringVar() #* botones de radio
 def funciones():
-    funciones = ["e", "sen()", "cos()", "tan()", "log()", "sqrt()"]
+    funciones = ["exp", "sen()", "cos()", "tan()", "log()", "sqrt()","exp()"]
     posicion_cursor = funcion_entry.index(tk.INSERT)
     seleccion = funcionVar.get()
 
@@ -301,7 +310,7 @@ def funciones():
 Label(root2, text="Funciones", font=('Helvetica', 14, 'bold'), bg="#2F4F4F", fg="white").place(x=640, y=90)
 
 #? Contenedor del tablero de funciones
-tablero_funcion = ttk.Frame(root2)
+tablero_funcion = Frame(root2, bg="#2F4F4F")
 tablero_funcion.place(x=620, y=140)
 
 style = ttk.Style()
@@ -309,23 +318,23 @@ style.configure("TRadiobutton", font=("Helvetica", 10), padding=6)
 
 #? Funciones matemáticas como opciones
 botones = [
-    ("e", "e", 0, 0),
-    ("Log()", "log()", 0, 1),
-    ("√", "sqrt()", 0, 2),
+    ("e", "exp", 0, 0),
+    ("e^()", "exp()", 0, 1), 
+    ("Log()", "log()", 0, 2),
+    ("√", "sqrt()", 0, 3),
     ("sen()", "sen()", 1, 0),
     ("cos()", "cos()", 1, 1),
-    ("tan()", "tan()", 1, 2)
+    ("tan()", "tan()", 1, 2),
+    
 ]
 
 for texto, valor, fila, col in botones:
-    ttk.Radiobutton(
-        tablero_funcion,
+     Button(
+        tablero_funcion,  # o tablero_numeros si es otro frame
         text=texto,
-        value=valor,
-        variable=funcionVar,
-        command=funciones,
-        style="TRadiobutton"
-    ).grid(row=fila, column=col, padx=10, pady=5)
+        command=lambda val=texto: accion(val),  # acción al presionar
+        **boton_style
+    ).grid(row=fila, column=col, padx=5, pady=5)
 
 #? Botón de calcular
 bot = Button(
@@ -337,7 +346,7 @@ bot = Button(
     activebackground="#45A049",
     command=lambda: tablero(porcentaje_entry.get(), xl_entry.get(), xu_entry.get())
 )
-bot.place(x=620, y=240)
+bot.place(x=620, y=260)
 
 #? Botón para limpiar
 clear_button = Button(
@@ -349,7 +358,7 @@ clear_button = Button(
     activebackground="#e53935",
     command=clear_inputs
 )
-clear_button.place(x=740, y=240)
+clear_button.place(x=740, y=260)
 
 #? Botón de ayuda (instrucciones)
 instrucciones = Button(
@@ -361,7 +370,7 @@ instrucciones = Button(
     activebackground="#1976D2",
     command=crear_ventana1
 )
-instrucciones.place(x=620, y=300)
+instrucciones.place(x=620, y=305)
 
 #? creamos tabla para la meustra de los valores
 columns = ['Iteración', 'X_L', 'X_R', 'X_U', 'f(X_L)', 'f(X_R)', 'f(X_U)', '|e_a|']
