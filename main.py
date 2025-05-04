@@ -293,17 +293,6 @@ for texto, fila, col in botones:
     ).grid(row=fila, column=col, padx=5, pady=5)
 
 #? creamos funcion para mandar los valores del tablero a la caja de texto de funcion
-funcionVar=StringVar() #* botones de radio
-def funciones():
-    funciones = ["exp", "sen()", "cos()", "tan()", "log()", "sqrt()","exp()"]
-    posicion_cursor = funcion_entry.index(tk.INSERT)
-    seleccion = funcionVar.get()
-
-    if seleccion in funciones:
-        if seleccion == "sen()":
-            funcion_entry.insert(posicion_cursor, "sin()")
-        else:
-            funcion_entry.insert(posicion_cursor, seleccion)
 
                 
 #? Tablero de Funciones  
@@ -330,9 +319,9 @@ botones = [
 
 for texto, valor, fila, col in botones:
      Button(
-        tablero_funcion,  # o tablero_numeros si es otro frame
+        tablero_funcion,  
         text=texto,
-        command=lambda val=texto: accion(val),  # acción al presionar
+        command=lambda val=valor: accion(val), 
         **boton_style
     ).grid(row=fila, column=col, padx=5, pady=5)
 
