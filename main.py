@@ -96,7 +96,6 @@ def falsa_posicion(error_relativo, xl, xu):
             return tabla
         
         fxr=evaluar(xr)
-        
         #? determinamos el error relativo porcentual y lo almacenamos en la tabla 
         if(contador == 0):
             porcentaje_error="####"
@@ -140,8 +139,8 @@ def falsa_posicion(error_relativo, xl, xu):
 def tablero (error,XL,XU):
     try:
         error_relativo=float(error)
-        xl=float(XL)
-        xu=float(XU)
+        xl = float(sympify(XL.replace("π", "pi")))
+        xu = float(sympify(XU.replace("π", "pi")))
         result_data = falsa_posicion(error_relativo,xl,xu)
         clear_table()
         for row_data in result_data:   #* recorre cada fila e inserta en un componente de la tabla llamado tree
@@ -327,7 +326,7 @@ botones = [
     ("sen()", "sin()", 1, 0),
     ("cos()", "cos()", 1, 1),
     ("tan()", "tan()", 1, 2),
-    
+    ("π", "pi", 1,3)
 ]
 
 for texto, valor, fila, col in botones:
