@@ -146,10 +146,14 @@ def tablero (error,XL,XU):
         clear_table()
         for row_data in result_data:   #* recorre cada fila e inserta en un componente de la tabla llamado tree
             tree.insert('', 'end', values=row_data)
+        if result_data:
+            ultimo_xr = result_data[-1][2]
+            ultimo_error = result_data[-1][7]
+            resultado_label.config(text=f"El valor aproximado del cero de la función es, {ultimo_xr},para un error de: {ultimo_error}%")
         plot_function(funcion_entry.get(),result_data)   #* llama a la funcion plot_fuction para graficar, enviando la funcion  y los datos resultantes del metodo
     except (InvalidFunctionError, ValueError,NoConvergenceError) as e:
         messagebox.showerror("Error", str(e))
-    
+
 #? creamos interfazes
 
 #? creamos interfaz de instrucciones 
@@ -191,6 +195,7 @@ def crear_ventana1():
         "➤ No ingreses letras en los campos numéricos.",
         "➤ Ingresa el porcentaje tal como está en el ejercicio, por ejemplo: 5%",
         "➤ Para logaritmo base 10 usa: log(x,10)",
+        "➤ Para e utiliza exp y para e^(x) utiliza exp(x)",
         "➤ Para logaritmo natural puedes usar simplemente: log(x)",
         "➤ Los tableros solo modifican la caja de función. Otros campos deben llenarse manualmente.",
         "➤ Usa signos válidos: + (suma), - (resta), * (multiplicación), / (división)",
@@ -210,7 +215,7 @@ def crear_ventana1():
 crear_ventana1()
 #? ventana principal 
 root2=Tk()
-root2.geometry("950x650")
+root2.geometry("950x700")
 root2.config(bg="#2F4F4F")
 root2.title("Pedir datos")
 
@@ -238,6 +243,14 @@ Label(root2, text="Error (%)", **estilo_etiqueta).place(x=20, y=260)
 porcentaje_entry = ttk.Entry(root2, name="porcentaje", **estilo_entry)
 porcentaje_entry.place(x=152, y=260)
 
+resultado_label = Label(
+    root2,
+    text="",  # vacío inicialmente
+    font=('Helvetica', 12, 'bold'),
+    bg="#2F4F4F",
+    fg="white"
+)
+resultado_label.place(x=320, y=670)
 
 #? enviar valores a caja de texto para la funcion
 def enviar_numero(valor):
