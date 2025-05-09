@@ -144,7 +144,8 @@ def tablero (error,XL,XU):
         result_data = falsa_posicion(error_relativo,xl,xu)
         clear_table()
         for row_data in result_data:   #* recorre cada fila e inserta en un componente de la tabla llamado tree
-            tree.insert('', 'end', values=row_data)
+            tree.insert('', 'end', values=[f"{x:.4f}" if isinstance(x, float) else x for x in row_data])
+
         if result_data:
             ultimo_xr = result_data[-1][2]
             ultimo_error = result_data[-1][7]
@@ -261,7 +262,7 @@ def enviar_simbolos(simbolo):
     posicion_cursor=funcion_entry.index(tk.INSERT)
     
     if(simbolo=="^"):
-        funcion_entry.insert(posicion_cursor,"**()")
+        funcion_entry.insert(posicion_cursor,"()")
     else:
         funcion_entry.insert(posicion_cursor,simbolo)
     
