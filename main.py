@@ -262,7 +262,7 @@ def enviar_simbolos(simbolo):
     posicion_cursor=funcion_entry.index(tk.INSERT)
     
     if(simbolo=="^"):
-        funcion_entry.insert(posicion_cursor,"()")
+        funcion_entry.insert(posicion_cursor,"**()")
     else:
         funcion_entry.insert(posicion_cursor,simbolo)
     
